@@ -12,7 +12,7 @@ export default class Motherboard {
         let bios = false;
 
         console.log("Press F12 to enter BIOS;");
-        Keyboard.onKeyPress(Key.F12, (keyPressed, close) => {
+        Keyboard.onKeyPress(Key.F12, (key, close) => {
             bios = true;
             close();
         })

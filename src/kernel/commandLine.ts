@@ -16,7 +16,10 @@ export async function executeCLI(os: CPUProcess) {
             let cmd = args[0].toLowerCase();
             
             let command = Commands.find((c) => {
-                return c.name.toLocaleLowerCase() == cmd;
+                let aliasesLowered: string[] = [];
+                if (c.aliases)
+                    aliasesLowered = c.aliases.map((alias) => alias.toLowerCase());
+                return c.name.toLowerCase() == cmd || aliasesLowered.includes(cmd);
             })
 
             if (command) {

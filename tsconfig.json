@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "downlevelIteration": true,
+        "target": "ES2015"
+    }
+}

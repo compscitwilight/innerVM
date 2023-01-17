@@ -9,3 +9,6 @@ I wrote things such as the Kernel and BIOS, and doing so caused a lot of the cod
 Unlike other virtual machines, this one doesn't take advantage of legitimate virtualization. It works a lot more on the backend than anything, and can be completely customized if you'd like. If you want to write your own kernel to replace innerOS, then go for it, and since the runtime enviornment is Node.js, you can add as many packages as you desire to help your development.
 
 The only thing that is really important about this project is `/index.ts` and `/hardware/`, since those are the guts of the entire virtual machine. Everything inside of `/src/` is miscellaneous.
+
+## Use case
+Well, if you've ever wanted to write your own operating system without having to deal with the (traditional) struggles of OS development, then this is the project for you.

@@ -1,0 +1,17 @@
+{
+  "name": "inneros",
+  "version": "1.0.0",
+  "description": "Virtual hardware and software, powered by TypeScript.",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+    "axios": "^1.2.2"
+  }
+}

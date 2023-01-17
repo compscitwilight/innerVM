@@ -1,6 +1,7 @@
+import config from "../config.json";
 export default class Memory {
     public static allocated = new Map<number, number>();
-    public static maxMemory = 90099999;
+    public static maxMemory = config.maxRam;
     public static allocate(address: number, size: number) {
         if ((this.getTotalAllocated() + size) > this.maxMemory) return;
         let prev = this.allocated.get(address);

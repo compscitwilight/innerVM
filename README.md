@@ -12,3 +12,12 @@ The only thing that is really important about this project is `/index.ts` and `/
 
 ## Use case
 Well, if you've ever wanted to write your own operating system without having to deal with the (traditional) struggles of OS development, then this is the project for you.
+
+## Terminology
+### InnerVM Specific
+`Third wall` - Whenever a piece of software being ran on this virtual machine "breaks the fourth wall", it usually means that it acknowledges the fact that it is in fact a virtual machine, and not a physical computer.
+
+### General
+`Kernel` - A kernel is a computer program which works with the operating system to provide low-level control. It manages things such as user input.
+`Bootloader` - A bootloader is a computer program which is executed whenever the computer starts. It allows the user to select an operating system that is avaliable on their storage devices, and handles that for the user.
+`BIOS` - The BIOS is a firmware which allows the user to manage hardware such as the motherboard, CPU, storage, and memory.

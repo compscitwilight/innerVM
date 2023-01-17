@@ -1,4 +1,4 @@
-import config from "../config.json";
+import config from "../config";
 export default class Memory {
     public static allocated = new Map<number, number>();
     public static maxMemory = config.maxRam;

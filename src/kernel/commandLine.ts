@@ -2,9 +2,9 @@ import { CPUProcess } from "../../hardware/CPU";
 import { createInterface } from "readline";
 import { stdin as input, stdout as output } from "node:process";
 import { Session } from "./data/session";
-import { Commands } from "./data/Commands";
+import { Commands } from "./drivers/Commands";
 
-export async function executeCLI(os: CPUProcess) {
+export function executeCLI(os: CPUProcess) {
     os.write("loading command line...");
     os.writeOut();
     let rlInterface = createInterface({ input, output });
@@ -59,9 +59,6 @@ export async function executeCLI(os: CPUProcess) {
                     FileSystem.listCurrentDirectory(os);
                     break;
                 case "http":
-
-                    break;
-                case "http-server":
 
                     break;
                 default:

@@ -3,12 +3,14 @@ import Memory from "./Memory";
 export default class CPU {
     public static readonly cores = 1;
     public static readonly maxPrograms = 50;
-    private static readonly processes = new Set<number>();
+    private static readonly processes = new Set<CPUProcess>();
 
     private static addProcess(address: number) {
-        if (this.processes.has(address)) return;
-        this.processes.add(address);
-        return new CPUProcess(address);
+        if ([...this.processes.values()].find((p) => p.address == address)) return;
+        let memoryUsage = Memory.getAll().get(address);
+        let process = new CPUProcess(address, memoryUsage);
+        this.processes.add(process);
+        return process;
     }
 
     public static getProcesses() {
@@ -16,18 +18,18 @@ export default class CPU {
     }
 
     public static killProcess(address: number) {
-        if (!this.processes.has(address)) return;
-        this.processes.delete(address);
+        let process = [...this.processes.keys()].find((p) => p.address === address);
+        if (!process) return;
+        this.processes.delete(process);
     }
 
     public static killAllProcesses() {
         let processes = this.getProcesses();
-        for (var i = 0; i < [...processes.keys()].length; i++) {
-            let addr = [...processes.values()][i];
-            Memory.deallocate(addr);
-            if (processes.has(addr))
-                this.killProcess(addr);
-        }
+        processes.forEach((p) => {
+            Memory.deallocate(p.address);
+            if (![...processes.values()].find((p2) => p2.address == p.address)) return;
+            this.killProcess(p.address);
+        })
     }
 
     public static executeProcess(processAddress: number, instruction: Instruction) {
@@ -52,8 +54,11 @@ export class CPUProcess {
     public childProcesses = new Array<CPUProcess>();
 
     constructor(
-        public address: number
-    ) {};
+        public address: number,
+        protected memoryUsage: number
+    ) {
+        console.log(memoryUsage);
+    };
 
     public kill() {
         CPU.killProcess(this.address);
@@ -72,5 +77,9 @@ export class CPUProcess {
 
     public addChildProcess(process: CPUProcess) {
         this.childProcesses.push(process);
+    }
+
+    public getMemoryFootprint() {
+        return this.memoryUsage;
     }
 }

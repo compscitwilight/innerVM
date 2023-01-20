@@ -2,7 +2,7 @@ import Motherboard from "./hardware/Motherboard";
 import Storage from "./hardware/Storage";
 
 console.clear();
-process.stdin.setRawMode(true);
+//process.stdin.setRawMode(true);
 
 let storageDevices = Storage.getStorageDevices();
 let rootDevice = storageDevices[0];

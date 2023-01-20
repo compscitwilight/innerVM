@@ -1,6 +1,9 @@
 import { CPUProcess } from "../../../hardware/CPU";
-import { startProcessAnaylse } from "../drivers/ProcessAnaylse";
-import { getDate } from "../drivers/Time";
+import ACPI from "./ACPI";
+import { startProcessAnaylse } from "./ProcessAnaylse";
+import { getDate } from "./Time";
+import { listCurrentDirectory} from "../drivers/FileSystem";
+import { Network } from "../drivers/Network";
 export interface CommandArgument {
     name: string,
     required: boolean,
@@ -57,5 +60,40 @@ export let Commands: Command[] = [
             os.write(date);
             os.writeOut();
         }
+    },
+    {
+        name: "shutdown",
+        description: "Shuts down the computer.",
+        execute: (args: string[], cmd: string, os: CPUProcess) => {
+            ACPI.shutdown();
+        }
+    },
+    {
+        name: "ls",
+        aliases: ["list"],
+        description: "Lists the file contents in the current directory.",
+        execute: (args: string[], cmd: string, os: CPUProcess) => {
+            listCurrentDirectory(os);
+        }
+    },
+    {
+        name: "http",
+        description: "Command for accessing HTTP methods",
+        execute: (args: string[], cmd: string, os: CPUProcess) => {
+            let option = args[1];
+            switch (option) {
+                case "":
+
+                    break;
+                default:
+                    os.write("HTTP command quick-start");
+                    os.write("http <requestType> <url>");
+                    os.write("http server <start> <port?>");
+                    os.writeOut();
+                    break;
+            }
+        }
     }
 ];
+
+export function registerCommand(data: Command) {};

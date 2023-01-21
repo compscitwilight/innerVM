@@ -1,4 +1,5 @@
 import Memory from "./Memory";
+import { ConsoleStyle } from "../util/ConsoleStyle";
 
 export default class CPU {
     public static readonly cores = 1;
@@ -52,20 +53,31 @@ export type Instruction = (process: CPUProcess) => void;
 export class CPUProcess {
     public writing = new Array<any>();
     public childProcesses = new Array<CPUProcess>();
+    public alias?: string = "unknown_process";
+    public bg?: ConsoleStyle;
 
     constructor(
         public address: number,
         protected memoryUsage: number
-    ) {
-        console.log(memoryUsage);
-    };
+    ) {};
 
     public kill() {
         CPU.killProcess(this.address);
     }
 
-    public write(content?: any) {
-        this.writing.push(content);
+    public write(content?: any, style?: ConsoleStyle | ConsoleStyle[]) {
+        let styleString = "";
+        if (style) {
+            if (!Array.isArray(style))
+                styleString = style;
+            else
+                for (var i = 0; i < style.length; i++) {
+                    let str = style[i];
+                    styleString += str;
+                };
+        }
+
+        this.writing.push(styleString + content + (this.bg || ConsoleStyle.Reset));
     }
 
     public writeOut() {

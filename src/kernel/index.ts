@@ -4,6 +4,7 @@ import hardware from "../../hardware";
 import ACPI from "./drivers/ACPI";
 
 export function executeKernel(os: CPUProcess) {
+    os.alias = "inneros_kernel";
     os.write("Welcome to the innerOS kernel (v1.0).");
     os.write("Use 'help' for a list of commands, use 'psa' for process analyse");
     os.writeOut();

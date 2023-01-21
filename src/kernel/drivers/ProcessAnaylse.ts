@@ -26,6 +26,8 @@ export function startProcessAnaylse(os: CPUProcess) {
 
     hardware.Memory.allocate(0x001040, 100);
     hardware.CPU.executeProcess(0x001040, (PSA: CPUProcess) => {
+        PSA.alias = "process_anaylse";
+
         let maxMem = hardware.Memory.maxMemory;
         let usedMem = hardware.Memory.getTotalAllocated();
     
@@ -35,8 +37,9 @@ export function startProcessAnaylse(os: CPUProcess) {
     
         let processes = hardware.CPU.getProcesses();
         processes.forEach((p) => {
-            let percentage = Math.floor((p.getMemoryFootprint() / hardware.Memory.maxMemory) * 100);
-            os.write(`>= ${p.address} - (${percentage}% memory)`);
+            let percentage = (p.getMemoryFootprint() / hardware.Memory.maxMemory) * 100;
+            let msg = `>= ${p.address.toString(16)} (${p.alias || "unknown"}) - (${percentage}% memory) - (${p.getMemoryFootprint()} bytes)`
+            PSA.write(msg);
         }) 
         
         PSA.writeOut();

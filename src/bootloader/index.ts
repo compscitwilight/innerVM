@@ -8,6 +8,7 @@ import { StorageDevice } from "../../hardware/Storage";
 import { CPUProcess } from "../../hardware/CPU";
 import { executeKernel } from "../kernel";
 import { Session } from "../kernel/data/session";
+import { ConsoleStyle } from "../../util/ConsoleStyle";
 
 let input = createInterface({
     input: process.stdin,
@@ -17,13 +18,17 @@ let input = createInterface({
 export function startBootloader() {
     hardware.Memory.allocate(0x2, 1000000);
     hardware.CPU.executeProcess(0x2, (bootloaderProcess: CPUProcess) => {
-        bootloaderProcess.write("=== :cakeL: - Inner's Best Bootloader ===");``
+        bootloaderProcess.alias = "cakel";
+        bootloaderProcess.write("=== :cakeL(oader): ===", ConsoleStyle.BgBlue);
         let bootDevices = hardware.Storage.getStorageDevices();
     
         function listDevices() {
             bootloaderProcess.write("Select boot device");
             bootDevices.forEach((device, index) => {
-                bootloaderProcess.write(`${index}: |NAME:"${device.name}" (${device.getUsed()}/${device.maxCapacity} bytes)|`);
+                bootloaderProcess.write(
+                    `${index}: |NAME:"${device.name}" (${device.getUsed()}/${device.maxCapacity} bytes)|`,
+                    [ConsoleStyle.BgMagenta, ConsoleStyle.Underscore]
+                );
             });
         
             bootloaderProcess.writeOut();
@@ -54,7 +59,13 @@ export function startBootloader() {
                 return file.toLowerCase().endsWith(".os");
             })
             operatingSystemFiles.forEach((file, index) => {
-                bootloaderProcess.write(`${index} : ${file}`);
+                bootloaderProcess.write(`${index} : ${file}`,
+                    [
+                        ConsoleStyle.FgWhite,
+                        ConsoleStyle.BgGreen,
+                        ConsoleStyle.Underscore
+                    ]
+                );
                 bootloaderProcess.writeOut();
             })
     

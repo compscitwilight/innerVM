@@ -20,13 +20,13 @@ export function removeProcess(address: number) {
     processMap.delete(address);
 }
 
-export function startProcessAnaylse(os: CPUProcess) {
+export function startProcessAnalyse(os: CPUProcess) {
     os.write("Starting Process Anaylse...");
     os.writeOut();
 
     hardware.Memory.allocate(0x001040, 100);
     hardware.CPU.executeProcess(0x001040, (PSA: CPUProcess) => {
-        PSA.alias = "process_anaylse";
+        PSA.alias = "process_analyse";
 
         let maxMem = hardware.Memory.maxMemory;
         let usedMem = hardware.Memory.getTotalAllocated();

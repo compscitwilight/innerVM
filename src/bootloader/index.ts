@@ -15,6 +15,9 @@ let input = createInterface({
     output: process.stdout
 })
 
+/**
+ * Executes the cakeLoader process.
+ */
 export function startBootloader() {
     hardware.Memory.allocate(0x2, 1000000);
     hardware.CPU.executeProcess(0x2, (bootloaderProcess: CPUProcess) => {
@@ -22,6 +25,9 @@ export function startBootloader() {
         bootloaderProcess.write("=== :cakeL(oader): ===", ConsoleStyle.BgBlue);
         let bootDevices = hardware.Storage.getStorageDevices();
     
+        /**
+         * Lists the avaliable devices on the computer.
+         */
         function listDevices() {
             bootloaderProcess.write("Select boot device");
             bootDevices.forEach((device, index) => {
@@ -34,6 +40,9 @@ export function startBootloader() {
             bootloaderProcess.writeOut();
         }
     
+        /**
+         * Prompts the user for the device that they would like to boot into.
+         */
         function getDevice() {
             input.question("device> ", (response: string) => {
                 let index = Number(response);
@@ -53,6 +62,11 @@ export function startBootloader() {
             })
         }
     
+        /**
+         * Lists the operating system files (.os) in the storage device given.
+         * @param device Storage device to search
+         * @returns 
+         */
         function listOS(device: StorageDevice) {
             let contents = device.contents;
             let operatingSystemFiles = [...contents.keys()].filter((file) => {

@@ -1,3 +1,4 @@
+export type keyPressCallback = (key: string, ctrl?: boolean) => void;
 export enum Key {
     Backtick = "`",
     Tilda = "~",

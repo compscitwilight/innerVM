@@ -1,3 +1,3 @@
 export default {
-    "maxRam": 90099999
+    maxRam: 90099999
 }

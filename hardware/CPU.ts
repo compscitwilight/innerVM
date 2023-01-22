@@ -77,7 +77,7 @@ export class CPUProcess {
                 };
         }
 
-        this.writing.push(styleString + content + (this.bg || ConsoleStyle.Reset));
+        this.writing.push((this.bg || ConsoleStyle.Reset) + styleString + content + ConsoleStyle.Reset);
     }
 
     public writeOut() {

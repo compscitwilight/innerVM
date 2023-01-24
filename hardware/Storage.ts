@@ -38,7 +38,7 @@ export class StorageDevice {
 }
 
 export default class Storage {
-    private static readonly activeDevices = [
+    private static readonly activeDevices: StorageDevice[] = [
         new StorageDevice(100, "root")
     ]
 

@@ -2,10 +2,11 @@ import { CPUProcess } from "../../../hardware/CPU";
 import ACPI from "./ACPI";
 import { startProcessAnalyse } from "../app/ProcessAnalyse";
 import { getDate } from "./Time";
-import { listCurrentDirectory} from "../drivers/FileSystem";
-import { Network } from "../drivers/Network";
+import { listCurrentDirectory, changeDirectory, getCurrentDirectoryContents } from "./fs/FileSystem";
 import { ConsoleStyle } from "../../../util/ConsoleStyle";
 import { error } from "../commandLine";
+import { createPackage } from "../app/pckg";
+
 export interface CommandArgument {
     name: string,
     required: boolean,
@@ -139,15 +140,60 @@ export let Commands: Command[] = [
             switch (action.toLowerCase()) {
                 case "new":
                     let directory = args[2];
+                    let name = args[3];
                     if (!directory) {
                         error("Directory is required");
                         return;
                     }
+
+                    if (!name) {
+                        error("Name is required.");
+                        return;
+                    }
+
+                    name = name.toLowerCase();
+
+                    let path = `/pckg/${name}`;
+                    createPackage(name);
+
+                    os.write(`Created new package "${name}" in ${path}`, ConsoleStyle.FgGreen);
+                    os.writeOut();
                     break;
                 default:
                     os.write("Please use 'pckg' to see a list of the avaliable options for this command.", ConsoleStyle.FgRed);
                     os.writeOut();
             }
+        }
+    },
+    {
+        name: "cd",
+        description: "Changes the directory.",
+        args: [
+            {
+                name: "directory",
+                required: true
+            }
+        ],
+        execute: (args: string[], cmd: string, os: CPUProcess) => {
+            let directory = args[1];
+            if (!directory) {
+                error("Directory parameter is required.");
+                return;
+            }
+
+            let currentDir = getCurrentDirectoryContents();
+            for (var i = 0; i < currentDir.length; i++) {
+                let file = currentDir[i];
+                if (file.includes("/"))
+                    file.replace("/", "");
+            }
+            
+            if (!currentDir.includes(directory)) {
+                error("Invalid directory.");
+                return;
+            }
+
+            changeDirectory(directory);
         }
     }
 ];

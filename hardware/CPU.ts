@@ -65,7 +65,12 @@ export class CPUProcess {
         CPU.killProcess(this.address);
     }
 
-    public write(content?: any, style?: ConsoleStyle | ConsoleStyle[]) {
+    /**
+     * Validates the style provided to write() or writeLL() and returns a style string to be appended to the content being printed.
+     * @param style The style to be validated and transformed into a string.
+     * @returns styleString
+     */
+    private validateStyle(style?: ConsoleStyle | ConsoleStyle[]) {
         let styleString = "";
         if (style) {
             if (!Array.isArray(style))
@@ -76,8 +81,27 @@ export class CPUProcess {
                     styleString += str;
                 };
         }
+        return styleString;
+    }
 
+    /**
+     * Creates a new line of text.
+     * @param content The data to be output
+     * @param style ConsoleStyle array
+     */
+    public write(content?: any, style?: ConsoleStyle | ConsoleStyle[]) {
+        let styleString = this.validateStyle(style);
         this.writing.push((this.bg || ConsoleStyle.Reset) + styleString + content + ConsoleStyle.Reset);
+    }
+
+    /**
+     * Writes text to the last written line.
+     * @param content The data to be output
+     * @param style ConsoleStyle array
+     */
+    public writeLL(content?: any, style?: ConsoleStyle | ConsoleStyle) {
+        let styleString = this.validateStyle(style);
+        this.writing[this.writing.length] += styleString;
     }
 
     public writeOut() {

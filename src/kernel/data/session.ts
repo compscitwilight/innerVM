@@ -1,4 +1,5 @@
 import { StorageDevice } from "../../../hardware/Storage";
+import { formatCharacters, RemovalMode } from "../drivers/fs/FileSystem";
 
 /**
  * User session data.
@@ -11,5 +12,8 @@ export class Session {
         return this.currentDirectory;
     }
 
-    public static goToDirectory(path: string) {}
+    public static goToDirectory(path: string) {
+        this.currentDirectory = formatCharacters(path, RemovalMode.Dir);
+        console.log(this.currentDirectory)
+    }
 }

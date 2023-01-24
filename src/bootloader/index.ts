@@ -6,7 +6,7 @@ import hardware from "../../hardware";
 import { createInterface } from "readline";
 import { StorageDevice } from "../../hardware/Storage";
 import { CPUProcess } from "../../hardware/CPU";
-import { executeKernel } from "../kernel";
+import { executeKernel, panic } from "../kernel";
 import { Session } from "../kernel/data/session";
 import { ConsoleStyle } from "../../util/ConsoleStyle";
 
@@ -29,6 +29,10 @@ export function startBootloader() {
          * Lists the avaliable devices on the computer.
          */
         function listDevices() {
+            if (bootDevices.length === 0) { 
+                panic("No boot devices are avaliable, and therefore cakeLoader cannot be used.", 0x2);
+                return;
+            }
             bootloaderProcess.write("Select boot device");
             bootDevices.forEach((device, index) => {
                 bootloaderProcess.write(
@@ -47,14 +51,17 @@ export function startBootloader() {
             input.question("device> ", (response: string) => {
                 let index = Number(response);
                 let device = bootDevices[index];
-                if (!index && index !== 0 || !device) {
+                if (!bootDevices[index]) {
                     bootloaderProcess.write("please select a valid device.");
                     bootloaderProcess.writeOut();
                     getDevice();
                     return;
                 }
+
+                if (!device)
+                    device = bootDevices[0];
     
-                bootloaderProcess.write("booting into device...");
+                bootloaderProcess.write("fetching storage device contents...");
                 bootloaderProcess.writeOut();
     
                 listOS(device);
@@ -100,15 +107,15 @@ export function startBootloader() {
                     listOS(device);
                     return;
                 }
-    
+                
+                Session.loadedStorageDevice = device;
                 hardware.Memory.allocate(0x10, 1000000);
                 bootloaderProcess.write("booting, cakeL is no longer needed");
                 bootloaderProcess.writeOut();
                 input.close();
     
                 hardware.CPU.executeProcess(0x10, executeKernel);
-                Session.loadedStorageDevice = device;
-    
+                //console.log(Session.loadedStorageDevice)
                 hardware.CPU.killProcess(0x2);
                 hardware.Memory.deallocate(0x2);
             })
@@ -117,4 +124,8 @@ export function startBootloader() {
         listDevices();
         getDevice();
     });
+}
+
+export function disableReadlineStream() {
+    input.close();
 }

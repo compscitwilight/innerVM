@@ -1,19 +1,33 @@
-import { CPUProcess } from "../../hardware/CPU";
+import { CPUProcess } from "../../../hardware/CPU";
 import { createInterface } from "readline";
 import { stdin as input, stdout as output } from "node:process";
-import { Session } from "./data/session";
-import { Commands } from "./drivers/Commands";
-import { ConsoleStyle } from "../../util/ConsoleStyle";
-import hardware from "../../hardware";
+import { Session } from "../data/session";
+import { Commands } from "./Commands";
+import { ConsoleStyle } from "../../../util/ConsoleStyle";
+import hardware from "../../../hardware";
+import { Widget } from "./Widget";
+import { TimeWidget } from "./Widgets";
 
+export let widgets: Widget[] = [TimeWidget]
 export function executeCLI(os: CPUProcess) {
     os.write("loading command line...");
     os.writeOut();
     let rlInterface = createInterface({ input, output });
     createCLI();
 
-    function createCLI() {
-        rlInterface.question(`admin:${Session.getCurrentDirectory()} > `, (res) => {
+    function getWidgets() {
+        return widgets.map((w) => {
+            return w;
+        });
+    }
+
+    function createCLI() { 
+        let widgetValues = widgets.map((w) => {
+            return w.templates.map((t) => {
+                return t.text;
+            });
+        }) + " ";
+        rlInterface.question(`${widgetValues}admin:${Session.getCurrentDirectory()} > `, (res) => {
             if (!res) {
                 createCLI();
                 return

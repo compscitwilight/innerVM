@@ -1,10 +1,10 @@
 import { CPUProcess } from "../../../hardware/CPU";
-import ACPI from "./ACPI";
+import ACPI from "../drivers/ACPI";
 import { startProcessAnalyse } from "../app/ProcessAnalyse";
-import { getDate } from "./Time";
-import { listCurrentDirectory, changeDirectory, getCurrentDirectoryContents } from "./fs/FileSystem";
+import { getDate } from "../drivers/Time";
+import { listCurrentDirectory, changeDirectory, getCurrentDirectoryContents } from "../drivers/fs/FileSystem";
 import { ConsoleStyle } from "../../../util/ConsoleStyle";
-import { error } from "../commandLine";
+import { error } from "./CommandLine";
 import { createPackage } from "../app/pckg";
 
 export interface CommandArgument {
@@ -114,6 +114,8 @@ export let Commands: Command[] = [
 
                     break;
                 default:
+                    let spaces = " ".repeat(20);
+                    os.write(`${spaces}HTTP (hypertext transfer protocol)${spaces}`, ConsoleStyle.BgYellow);
                     os.write("HTTP command quick-start");
                     os.write("http <requestType> <url>");
                     os.write("http server <start> <port?>");
@@ -188,8 +190,8 @@ export let Commands: Command[] = [
                     file.replace("/", "");
             }
             
-            if (!currentDir.includes(directory)) {
-                error("Invalid directory.");
+            if (!currentDir.includes(directory) && directory !== "/") {
+                error(`Invalid directory. "${directory}"`);
                 return;
             }
 

@@ -1,5 +1,5 @@
 import { Session } from "../data/session";
-import { error } from "../commandLine";
+import { error } from "../cli/CommandLine";
 
 export function createPackage(name: string) {
     let path = `/pckg/${name}`;

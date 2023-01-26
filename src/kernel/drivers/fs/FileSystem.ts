@@ -14,6 +14,10 @@ export function getStorageDevices() {
 }
 
 export function changeDirectory(dir: string) {
+    if (dir == "/") {
+        Session.goToDirectory("/");
+        return;
+    }
     Session.goToDirectory(dir);
 }
 
@@ -34,6 +38,18 @@ export function listCurrentDirectory(os: CPUProcess) {
         os.write(spaces + dir + spaces, ConsoleStyle.BgBlue);
     })
     os.writeOut();
+}
+
+export function formatDisk() {
+    let device = Session.loadedStorageDevice;
+    let contents = [...device.contents.keys()];
+    contents.forEach((file) => {
+        if (!file.startsWith("/") && !file.includes(".")) {
+            let content = device.read(file);
+            device.rm(file);
+            device.write(`/${file}`, content);
+        }
+    })
 }
 
 export function createDirectory(name: string) {

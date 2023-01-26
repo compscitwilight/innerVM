@@ -1,5 +1,6 @@
 import Memory from "./Memory";
 import { ConsoleStyle } from "../util/ConsoleStyle";
+import { validateStyle } from "../util/ValidateStyle";
 
 export default class CPU {
     public static readonly cores = 1;
@@ -70,18 +71,8 @@ export class CPUProcess {
      * @param style The style to be validated and transformed into a string.
      * @returns styleString
      */
-    private validateStyle(style?: ConsoleStyle | ConsoleStyle[]) {
-        let styleString = "";
-        if (style) {
-            if (!Array.isArray(style))
-                styleString = style;
-            else
-                for (var i = 0; i < style.length; i++) {
-                    let str = style[i];
-                    styleString += str;
-                };
-        }
-        return styleString;
+    public validateStyle(style?: ConsoleStyle | ConsoleStyle[]) {
+        return validateStyle(style);
     }
 
     /**

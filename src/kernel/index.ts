@@ -1,9 +1,10 @@
 import { CPUProcess } from "../../hardware/CPU";
-import { executeCLI } from "./commandLine";
+import { executeCLI } from "./cli/CommandLine";
 import hardware from "../../hardware";
 import ACPI from "./drivers/ACPI";
 import { Session } from "./data/session";
 import { ConsoleStyle } from "../../util/ConsoleStyle";
+import { formatDisk } from "./drivers/fs/FileSystem";
 
 export function executeKernel(os: CPUProcess) {
     let bootedDrive = Session.loadedStorageDevice;
@@ -12,6 +13,9 @@ export function executeKernel(os: CPUProcess) {
     bootedDrive.write("/logs");
     bootedDrive.write("/logs/s");
     bootedDrive.write("joe.txt");
+
+    os.write("formatting disk for InnerFS...");
+    formatDisk();
 
     os.alias = "inneros_kernel";
     os.write("Welcome to the innerOS kernel (v1.0).");

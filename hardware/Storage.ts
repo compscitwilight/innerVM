@@ -16,6 +16,14 @@ export class StorageDevice {
         return content;
     }
 
+    /**
+     * Remove file method
+     */
+    public rm(path: string) {
+        if (!this.contains(path)) return;
+        this.contents.delete(path);
+    }
+
     public partition(pStart: number, pEnd: number) {}
 
     /**

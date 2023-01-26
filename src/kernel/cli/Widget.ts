@@ -79,9 +79,7 @@ export class WidgetTemplate {
         }
         let templates = this.templates;
         this.text = (this.text + "");
-        console.log(templates)
         for (var i = 0; i < templates.length; i++) {
-            console.log();
             let template = templates[i];
             let identifier = `%${template.identifier}`;
             let indexInText = this.text.indexOf(identifier);

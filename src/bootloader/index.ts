@@ -107,14 +107,25 @@ export function startBootloader() {
                     listOS(device);
                     return;
                 }
+
+                if (!index)
+                    index = 0;
                 
                 Session.loadedStorageDevice = device;
                 hardware.Memory.allocate(0x10, 1000000);
                 bootloaderProcess.write("booting, cakeL is no longer needed");
                 bootloaderProcess.writeOut();
                 input.close();
-    
-                hardware.CPU.executeProcess(0x10, executeKernel);
+                
+                switch (operatingSystemFiles[index]) {
+                    case "inner.os":
+                        hardware.CPU.executeProcess(0x10, executeKernel);
+                        break;
+                    default:
+                        panic("Invalid operating system instruction!", 0x10);
+                        break;
+                }
+
                 //console.log(Session.loadedStorageDevice)
                 hardware.CPU.killProcess(0x2);
                 hardware.Memory.deallocate(0x2);

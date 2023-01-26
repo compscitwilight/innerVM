@@ -47,7 +47,8 @@ export class StorageDevice {
 
 export default class Storage {
     private static readonly activeDevices: StorageDevice[] = [
-        new StorageDevice(100, "root")
+        new StorageDevice(100, "root"),
+        new StorageDevice(100, "secondary")
     ]
 
     public static getStorageDevices() {

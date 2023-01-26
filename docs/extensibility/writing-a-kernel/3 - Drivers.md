@@ -45,4 +45,4 @@ export class Time {
 ```
 
 Of course, you can write whatever drivers you want for whatever use case your operating system will be used for.
-(go to <a href="./Bootloaders.md">next page</a>)
+(go to <a href="./4 - Bootloaders.md">next page</a>)

@@ -15,4 +15,4 @@ After your operating system's directory is created, you can go ahead and create 
 
 Your directory should contain: `index.ts`, `CLI.ts`, and `Processes.ts`. These are the foundations of your operating system.
 
-(go to <a href="./Index-File.md">next page</a>)
+(go to <a href="./2 - Index-File.md">next page</a>)

@@ -46,4 +46,4 @@ export function startOS() {
 
 This is a basic InnerVM operating system that contains a `ping` command. A good index file for your operating system is a great start, as it prevents confusion in the future. Make sure to keep this file as simple as possible, and use external files for other things such as drivers, commands, etc.
 
-(go to the <a href="./Drivers.md">next page</a>)
+(go to the <a href="./3 - Drivers.md">next page</a>)

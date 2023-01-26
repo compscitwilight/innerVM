@@ -1,2 +1,0 @@
-# Motherboard
-The **Motherboard** is one of the primary components of a standard computer. It is in charge of housing all of the other components, and acts as the "heart" of the computer. In InnerVM, the motherboard is responsible for BIOS, DateTime, and user input.

@@ -6,6 +6,7 @@ import { listCurrentDirectory, changeDirectory, getCurrentDirectoryContents } fr
 import { ConsoleStyle } from "../../../util/ConsoleStyle";
 import { error } from "./CommandLine";
 import { createPackage } from "../app/pckg";
+import { loadDesktopEnviornment } from "../../innerde";
 
 export interface CommandArgument {
     name: string,
@@ -93,7 +94,29 @@ export let Commands: Command[] = [
         name: "shutdown",
         description: "Shuts down the computer.",
         execute: (args: string[], cmd: string, os: CPUProcess) => {
-            ACPI.shutdown();
+            let arg = args[1];
+            let cancelled = false;
+            if (!arg) {
+                os.write("shutdown scheduled to happen in 10 seconds");
+                os.writeOut();
+
+                setTimeout(() => {
+                    console.log(cancelled);
+                    if (cancelled) {
+                        os.write("shutdown cancelled");
+                        os.writeOut();   
+                        return
+                    }
+                    ACPI.shutdown();
+                }, 10000);
+                return;
+            } else if (arg == "-c") {
+                cancelled = true;
+            } else if (arg == "-i") {
+                os.write("instant shutdown initiated");
+                os.writeOut();
+                ACPI.shutdown();
+            }
         }
     },
     {
@@ -196,6 +219,13 @@ export let Commands: Command[] = [
             }
 
             changeDirectory(directory);
+        }
+    },
+    {
+        name: "ide",
+        description: "Starts InnerDE (Inner Desktop Enviornment) server",
+        execute: (args: string[], cmd: string, os: CPUProcess) => {
+            loadDesktopEnviornment(os);
         }
     }
 ];

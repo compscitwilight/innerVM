@@ -1,0 +1,20 @@
+* {
+    user-select: none;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: black;
+    color: white;
+    font-family: sans-serif;
+    background-repeat: no-repeat;
+}
+
+.full {
+    position: absolute;
+}
+
+.center {
+    text-align: center;
+}

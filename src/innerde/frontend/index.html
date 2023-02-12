@@ -1,0 +1,35 @@
+<!--
+    # InnerDE HTML file
+    # This HTML file is used as the template for the desktop enviornment.
+
+    # I windowing system - ./windows.js
+    # Views controller - ./views.js
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- stylesheets beyond this line -->
+    <link href="/style/index.css" rel="stylesheet">
+    <link href="/style/windows.css" rel="stylesheet">
+    <link href="/style/topbar.css" rel="stylesheet">
+
+    <!-- no stylesheets beyond this line -->
+
+    <title>Inner Desktop Enviornment</title>
+</head>
+<body>
+    <div class="innerde">
+        <div id="topbar">
+            <p class="topbar-item" id="topbar-current-app"></p>
+            <p class="topbar-item center" id="topbar-time"></p>
+        </div>
+        <div class="full" id="window-layer"></div>
+    </div>
+</body>
+    <script src="/index.js" type="module"></script>
+</html>

@@ -1,0 +1,33 @@
+.window-frame {
+    border: 1px black solid;
+}
+
+.window-frame:hover {
+    border-color: blue;
+}
+
+.window-titlebar {
+    padding: 2px;
+    background-color: rgb(192, 255, 249);
+    cursor: grab;
+}
+
+.window-titlebar p {
+    text-align: center;
+}
+
+.window-titlebar-btn {
+    float: right;
+    padding: 3px;
+    border: 0.5px white;
+    cursor: pointer;
+}
+
+.window-titlebar-btn:hover {
+    background-color: white;
+}
+
+/** specific styling for hovering over the close button for window titlebars **/
+.window-titlebar-close:hover {
+    background-color: red;
+}

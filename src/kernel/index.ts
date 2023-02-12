@@ -5,6 +5,7 @@ import ACPI from "./drivers/ACPI";
 import { Session } from "./data/session";
 import { ConsoleStyle } from "../../util/ConsoleStyle";
 import { formatDisk } from "./drivers/fs/FileSystem";
+import { StorageDevice } from "../../hardware/Storage";
 
 export function executeKernel(os: CPUProcess) {
     let bootedDrive = Session.loadedStorageDevice;
@@ -14,12 +15,13 @@ export function executeKernel(os: CPUProcess) {
     bootedDrive.write("/logs/s");
     bootedDrive.write("joe.txt");
 
-    os.write("formatting disk for InnerFS...");
+    os.write("formatting disk for InnerFS...", ConsoleStyle.FgYellow);
     formatDisk();
 
     os.alias = "inneros_kernel";
     os.write("Welcome to the innerOS kernel (v1.0).");
     os.write("Use 'help' for a list of commands, use 'psa' for process analyse");
+    os.write("If you'd like to start a InnerDE (desktop enviornment) server, run 'ide'");
     os.writeOut();
     
     executeCLI(os);
@@ -42,4 +44,8 @@ export function panic(msg: string, address?: number) {
 
         ACPI.shutdown();
     })
+}
+
+export function mountStorageDevice(device: StorageDevice) {
+    
 }

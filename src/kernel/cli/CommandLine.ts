@@ -10,8 +10,6 @@ import { TimeWidget } from "./Widgets";
 
 export let widgets: Widget[] = [TimeWidget]
 export function executeCLI(os: CPUProcess) {
-    os.write("loading command line...");
-    os.writeOut();
     let rlInterface = createInterface({ input, output });
     createCLI();
 

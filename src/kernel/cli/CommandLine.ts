@@ -1,5 +1,5 @@
 import { CPUProcess } from "../../../hardware/CPU";
-import { createInterface } from "readline";
+import { createInterface, Interface } from "readline";
 import { stdin as input, stdout as output } from "node:process";
 import { Session } from "../data/session";
 import { Commands } from "./Commands";
@@ -8,9 +8,14 @@ import hardware from "../../../hardware";
 import { Widget } from "./Widget";
 import { TimeWidget } from "./Widgets";
 
+export let currentInterface: Interface | undefined;
+
 export let widgets: Widget[] = [TimeWidget]
 export function executeCLI(os: CPUProcess) {
     let rlInterface = createInterface({ input, output });
+    let commands = [...Commands];
+    currentInterface = rlInterface;
+
     createCLI();
 
     function getWidgets() {
@@ -19,13 +24,17 @@ export function executeCLI(os: CPUProcess) {
         });
     }
 
-    function createCLI() { 
+    async function createCLI() {
+        if (currentInterface !== rlInterface) {
+            console.log("ok");
+            return;
+        };
         let widgetValues = widgets.map((w) => {
             return w.templates.map((t) => {
                 return t.text;
             });
         }) + " ";
-        rlInterface.question(`${widgetValues}admin:${Session.getCurrentDirectory()} > `, (res) => {
+        currentInterface.question(`${widgetValues}admin:${Session.getCurrentDirectory()} > `, (res) => {
             if (!res) {
                 createCLI();
                 return
@@ -50,6 +59,15 @@ export function executeCLI(os: CPUProcess) {
             createCLI();
         })
     }
+}
+
+export function disposeCLI() {
+    currentInterface = undefined;
+}
+
+export function restartCLI(os: CPUProcess) {
+    disposeCLI();
+    executeCLI(os);
 }
 
 export function error(msg: string, code?: number) {

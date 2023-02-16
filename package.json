@@ -1,24 +1,21 @@
 {
-  "name": "inneros",
-  "version": "1.0.0",
+  "name": "inner",
+  "version": "0.1.2",
   "description": "Virtual hardware and software, powered by TypeScript.",
   "main": "index.ts",
   "scripts": {
     "start": "ts-node index.ts"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "devrusty",
+  "license": "GNU General Public License",
   "devDependencies": {
     "@types/express": "^4.17.17",
-    "@types/jest": "^29.4.0",
-    "jest": "^29.4.0",
-    "ts-jest": "^29.0.5",
-    "ts-node": "^10.9.1",
-    "tslib": "^2.4.1"
+    "ts-node": "^10.9.1"
   },
   "dependencies": {
     "axios": "^1.2.2",
     "express": "^4.18.2",
-    "socket.io": "^4.6.0"
+    "socket.io": "^4.6.0",
+    "tslib": "^2.5.0"
   }
 }

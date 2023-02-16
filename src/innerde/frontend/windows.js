@@ -15,6 +15,7 @@ export class Window {
         const frame = document.createElement("div");
         frame.style.width = width;
         frame.style.height = height;
+        frame.id = title;
         frame.classList.add("window-frame");
         windowLayer.append(frame);
 
@@ -52,7 +53,10 @@ export class Window {
         this.frameElement = frame;
     }
 
-    setInnerHTML(html) {
-        this.frameElement.innerHTML = html;
+    addHTML(html) {
+        let prev = this.frameElement.innerHTML;
+        this.frameElement.innerHTML = `${prev}\n${html}`;
     }
+
+    createTopbar() { }
 }

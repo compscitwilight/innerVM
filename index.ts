@@ -3,6 +3,7 @@ import Storage from "./hardware/Storage";
 import CPU from "./hardware/CPU";
 import Memory from "./hardware/Memory";
 import { ConsoleStyle } from "./util/ConsoleStyle";
+//import packagejson from "package.json";
 
 let clear = console.clear;
 console.clear = () => {
@@ -10,7 +11,7 @@ console.clear = () => {
     Memory.allocate(0x00005, 0);
     CPU.executeProcess(0x00005, (virtualMachineBuffer) => {
         let spaces = " ".repeat(25);
-        virtualMachineBuffer.write(`${spaces}InnerVM - v1.0.0${spaces}`, ConsoleStyle.BgMagenta);
+        virtualMachineBuffer.write(`${spaces}InnerVM${spaces}`, ConsoleStyle.BgMagenta);
         virtualMachineBuffer.writeOut();
     })
 }

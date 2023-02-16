@@ -1,13 +1,17 @@
 import { formatCharacters, RemovalMode } from "./FileSystem";
-import hardware from "../../../../hardware";
 import { StorageDevice } from "../../../../hardware/Storage";
 
 export class Directory {
     constructor(
         public name: string,
         public path: string,
-        public storageDevice: StorageDevice
-    ) {};
+        public storageDevice: StorageDevice,
+        public permissionLevel?: number
+    ) {
+        if (!permissionLevel) {
+            this.permissionLevel = 0;
+        }
+    };
 
     public writeFile(name: string, content: string) {
         let formatted = formatCharacters(name, RemovalMode.File);

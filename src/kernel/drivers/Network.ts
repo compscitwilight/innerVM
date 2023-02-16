@@ -12,7 +12,11 @@ export enum HTTPMethod {
 }
 
 export class Network {
-    public static async httpRequest(method: HTTPMethod, url: string, data?: any) {
+    public static async httpRequest(
+            method: HTTPMethod | keyof HTTPMethod,
+            url: string,
+            data?: any
+        ) {
         hardware.Memory.allocate(0xf1, url.length);
         let response;
         
@@ -34,7 +38,9 @@ export class Network {
                 break;
         }
 
-        hardware.Memory.deallocate(0xf1, url.length);
+        hardware.Memory.deallocate(0xf1);
         return response;
-    }
+    };
+
+    public static async getNetworks() {};
 }

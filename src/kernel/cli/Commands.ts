@@ -1,3 +1,11 @@
+/**
+ * (C) Copyright 2023 - Devrusty
+ * This file is under the GNU General Public License.
+ * 
+ * This file is responsible for taking the command files from /commands, and allowing them
+ * to be used in the InnerOS command line by the end user.
+ */
+
 import { CPUProcess } from "../../../hardware/CPU";
 import * as fs from "fs";
 import * as path from "path";

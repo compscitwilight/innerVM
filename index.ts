@@ -1,3 +1,22 @@
+/**
+ * InnerVM - A free and open-source virtual machine/subsystem where you are able to build
+ * your own operating systems, and run them.
+ * 
+ * Copyright (C) 2023 - devrusty>
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * Discord: https://discord.com/users/472530726613549066
+ */
+
 import Motherboard from "./hardware/Motherboard";
 import Storage from "./hardware/Storage";
 import CPU from "./hardware/CPU";
@@ -18,6 +37,12 @@ console.clear = () => {
 
 console.clear();
 //process.stdin.setRawMode(true);
+
+console.log(`
+InnerVM Copyright (C) 2023 - devrusty
+This program comes with ABSOLUTELY NO WARRANTY;
+This is free software, and you are welcome to redistribute it under certain conditions.
+`);
 
 let BOOTLOADER = true;
 

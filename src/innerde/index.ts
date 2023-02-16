@@ -1,3 +1,16 @@
+/**
+ * (C) Copyright 2023 - Devrusty
+ * This file is under the GNU General Public License.
+ * 
+ * InnerDE is a free and open-source desktop enviornment that is compatbile with InnerOS
+ * operating systems.
+ * 
+ * InnerDE creates an Express.js server that is used to render the desktop enviornment. It is similar to
+ * GNOME.
+ * 
+ * InnerDE uses Socket.io to communicate with the kernel and the user from the browser.
+ */
+
 import * as express from "express";
 import * as socketio from "socket.io";
 import * as http from "http";

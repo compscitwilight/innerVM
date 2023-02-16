@@ -1,5 +1,11 @@
 /**
- * Source code for Process Anaylse, the built-in system monitor for innerOS.
+ * (C) Copyright 2023 - Devrusty
+ * This file is under the GNU General Public License.
+ * 
+ * Process Analyse (or PSA for short) is a simple system monitor that is built into
+ * InnerOS. It allows the user to view all of the processes that are running on the computer
+ * (including InnerOS and low-level processes), their statistics (CPU, Memory usage), and
+ * full customizability.
  */
 
 import hardware from "../../../hardware";

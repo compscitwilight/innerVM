@@ -1,3 +1,11 @@
+/**
+ * (C) Copyright 2023 - Devrusty
+ * This file is under the GNU General Public License.
+ * 
+ * This file is responsible for handling the command line in InnerOS. This includes features such as
+ * the Input/Output stream and widgets.
+ */
+
 import { CPUProcess } from "../../../hardware/CPU";
 import { createInterface, Interface } from "readline";
 import { stdin as input, stdout as output } from "node:process";

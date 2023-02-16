@@ -1,5 +1,12 @@
 /**
- * :cakeL: is the bootloader.
+ * (C) Copyright 2023 - Devrusty
+ * This file is under the GNU General Public License.
+ * 
+ * Cakeloder is an open-source bootloader. It is entirely modular, simple, and compatible
+ * with all InnerOS operating systems.
+ * 
+ * To learn how to implement Cakeloader in your InnerOS project, please read
+ * /docs/extensibility/writing-a-kernel/4 - Bootloaders.md
  */
 
 import hardware from "../../hardware";
@@ -7,8 +14,12 @@ import { createInterface } from "readline";
 import { StorageDevice } from "../../hardware/Storage";
 import { CPUProcess } from "../../hardware/CPU";
 import { executeKernel, panic } from "../kernel";
-import { Session } from "../kernel/data/session";
 import { ConsoleStyle } from "../../util/ConsoleStyle";
+
+// INNEROS SPECIFIC
+// PLEASE REMOVE THIS LINE AND ALL OCCURENCES OF "Session" 
+// IF YOU ARE IMPLEMENTING CAKELOADER IN YOUR OPERATING SYSTEM
+import { Session } from "../kernel/data/session";
 
 let input = createInterface({
     input: process.stdin,

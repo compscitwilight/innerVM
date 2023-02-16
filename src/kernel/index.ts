@@ -1,7 +1,14 @@
+/**
+ * (C) Copyright 2023 - Devrusty
+ * This file is under the GNU General Public License.
+ * 
+ * This file is responsible for handling the booting, bootstrapping, and methods of
+ * the InnerOS kernel.
+ */
+
 import { CPUProcess } from "../../hardware/CPU";
 import { executeCLI } from "./cli/CommandLine";
 import hardware from "../../hardware";
-import ACPI from "./drivers/ACPI";
 import { Session } from "./data/session";
 import { ConsoleStyle } from "../../util/ConsoleStyle";
 import { formatDisk } from "./drivers/fs/FileSystem";

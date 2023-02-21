@@ -1,6 +1,6 @@
 import { PermissionLevel } from "./PermissionLevel";
 import { StorageDevice } from "../../../../hardware/Storage";
-import { FileExtensions } from "./FileExt";
+import { FileExtensions } from "./ExtList";
 export interface FileProperties {
     description?: string,
     dateCreated?: string,

@@ -1,3 +1,9 @@
+import { _MODULE_NAME, _MODULE_DESCRIPTION, _MODULE_AUTHOR } from "./Module";
+
+_MODULE_NAME("ConsoleStyle");
+_MODULE_DESCRIPTION("A module containing an enum which contains RegEx color codes.");
+_MODULE_AUTHOR("devrusty");
+
 export enum ConsoleStyle {
     Reset = "\x1b[0m",
     Bright = "\x1b[1m",

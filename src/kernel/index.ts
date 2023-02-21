@@ -11,21 +11,28 @@ import { executeCLI } from "./cli/CommandLine";
 import hardware from "../../hardware";
 import { Session } from "./data/session";
 import { ConsoleStyle } from "../../util/ConsoleStyle";
-import { formatDisk } from "./drivers/fs/FileSystem";
+import { init, formatDisk } from "./drivers/fs/FileSystem";
 import { StorageDevice } from "../../hardware/Storage";
 import { readdirSync, readFileSync } from "fs";
+import { changeTopBuffer } from "../../";
 import { join } from "path";
 
+export const kernelInfo = {
+    version: 1.2
+}
+
 export function executeKernel(os: CPUProcess) {
+    changeTopBuffer(`InnerVM - InnerOS v${kernelInfo.version}`);
     // bootstrapping
     bootstrap();
 
     // load process
     os.write("formatting disk for InnerFS...", ConsoleStyle.FgYellow);
     formatDisk();
+    init();
 
     os.alias = "inneros_kernel";
-    os.write("Welcome to the innerOS kernel (v1.0).");
+    os.write(`Welcome to the innerOS kernel (v${kernelInfo.version}).`);
     os.write("Use 'help' for a list of commands, use 'psa' for process analyse");
     os.write("If you'd like to start a InnerDE (desktop enviornment) server, run 'ide'");
     os.writeOut();

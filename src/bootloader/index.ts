@@ -30,6 +30,7 @@ let input = createInterface({
  * Executes the cakeLoader process.
  */
 export function startBootloader() {
+    console.log(hardware);
     hardware.Memory.allocate(0x2, 1000000);
     hardware.CPU.executeProcess(0x2, (bootloaderProcess: CPUProcess) => {
         bootloaderProcess.alias = "cakel";

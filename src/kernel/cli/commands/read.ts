@@ -33,6 +33,11 @@ export default {
             "read - " + file,
             [ ConsoleStyle.BgBlack, ConsoleStyle.Bright ]
         );
+        if (file.endsWith(".app")) {
+            eval(Session.loadedStorageDevice.read(path));
+            return;
+        }
+        
         os.write(Session.loadedStorageDevice.read(path));
         os.writeOut();
     }

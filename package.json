@@ -4,7 +4,8 @@
   "description": "Virtual hardware and software, powered by TypeScript.",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "igfx": "ts-node hardware/Graphics.ts"
   },
   "author": "devrusty",
   "license": "GNU General Public License",

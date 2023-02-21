@@ -56,6 +56,7 @@ export class CPUProcess {
     public childProcesses = new Array<CPUProcess>();
     public alias?: string = "unknown_process";
     public bg?: ConsoleStyle;
+    public heap: string[] = new Array<string>();
 
     constructor(
         public address: number,

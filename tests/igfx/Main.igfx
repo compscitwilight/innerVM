@@ -1,0 +1,15 @@
+# copyright 2023 - devrusty
+# this file is under the GNU General Public License
+Render main_frame {
+  Buffer topbar {
+    color: Bg_Gray;
+    content: Text {
+      content: "idfk",
+      color: Fg_White
+    }
+  }
+
+  repeat 25 Buffer padding_top {
+    color: Bg_Blue
+  }
+}

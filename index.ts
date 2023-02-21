@@ -24,15 +24,25 @@ import Memory from "./hardware/Memory";
 import { ConsoleStyle } from "./util/ConsoleStyle";
 //import packagejson from "package.json";
 
+var bufferText = "InnerVM";
+
 let clear = console.clear;
 console.clear = () => {
     clear();
+    if (Memory.getAll().has(0x00005))
+        Memory.deallocate(0x00005)
     Memory.allocate(0x00005, 0);
     CPU.executeProcess(0x00005, (virtualMachineBuffer) => {
+        console.log(bufferText);
         let spaces = " ".repeat(25);
-        virtualMachineBuffer.write(`${spaces}InnerVM${spaces}`, ConsoleStyle.BgMagenta);
+        virtualMachineBuffer.write(`${spaces}${bufferText}${spaces}`, ConsoleStyle.BgMagenta);
         virtualMachineBuffer.writeOut();
     })
+}
+
+export function changeTopBuffer(txt: string) {
+    bufferText = txt;
+    console.clear();
 }
 
 console.clear();
@@ -44,13 +54,7 @@ This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions.
 `);
 
-let BOOTLOADER = true;
-
-let processArgs = process.argv;
-if (processArgs.includes("--no-bootloader"))
-    BOOTLOADER = false;
-
 let storageDevices = Storage.getStorageDevices();
 let rootDevice = storageDevices[0];
 rootDevice.write("inner.os", "This file is used to execute InnerOS.");
-Motherboard.executeFirmware(BOOTLOADER);
+Motherboard.executeFirmware();

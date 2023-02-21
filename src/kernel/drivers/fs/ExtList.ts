@@ -67,5 +67,10 @@ export enum FileExtensions {
     /**
      * A file extension used for configuration files.
      */
-    conf = ".conf"
+    conf = ".conf",
+
+    /**
+     * A file extension used for audio metadata files.
+     */
+    adata = ".adata"
 }

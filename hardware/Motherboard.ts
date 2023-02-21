@@ -1,38 +1,34 @@
 import CPU from "./CPU";
 import Memory from "./Memory";
-import { startBootloader, disableReadlineStream } from "../src/bootloader";
-import { startBIOS } from "../src/bios";
+import { startBIOS } from "./firmware/bios";
 import { Key, keyPressCallback } from "../util/InputTypes";
-import { executeKernel } from "../src/kernel";
-import { Session } from "../src/kernel/data/session";
-import { getStorageDevices } from "../src/kernel/drivers/fs/FileSystem";
+import config from "../config";
 
 let BIOSAddress = 0x1;
 let BIOSRam = 1000000; // 1mb
 export default class Motherboard {
-    public static executeFirmware(bootloader: boolean) {
+    public static usb_bus: USBStream[] = new Array<USBStream>();
+    public static executeFirmware() {
         Memory.allocate(BIOSAddress, BIOSRam);
         let bios = false;
 
         console.log("Press F12 to enter BIOS;");
-        //let biosKeyEvent = this.onKeyPress(Key.F12, () => {
-        //    bios = true;
-        //})
 
         CPU.timeout(1750, () => {
             if (bios) {
                 CPU.executeProcess(BIOSAddress, startBIOS);
             } else {
-                if (bootloader) {
-                    startBootloader();
+                if (typeof config.index === "function") {
+                    config.index();
+                    Memory.deallocate(BIOSAddress);
                 } else {
-                    Memory.allocate(0x10, 1000000);
-                    CPU.executeProcess(0x10, (os) => {
-                        let rootDevice = getStorageDevices()[0];
-                        Session.loadedStorageDevice = rootDevice;
-                        disableReadlineStream();
-                        executeKernel(os);
-                    });
+                    console.log("Failed to boot into storage device.");
+                    console.log("(check your 'config.ts' file for an index **function**).");
+                    console.log("Press [ESC] to shutdown.");
+
+                    this.onKeyPress(Key.Escape, () => {
+                        process.exit();
+                    })
                 }
             }
         });
@@ -53,4 +49,25 @@ export default class Motherboard {
 
         return event;
     }
+
+    public static addUSB(stream: USBStream) {
+        this.usb_bus.push(stream);
+    }
+};
+
+/* USB */
+
+export enum USBType {
+    video = "video",
+    storage = "storage",
+    audio = "audio",
+    unknown = "unknown"
 }
+
+export type streamListenerCallback = () => void;
+
+export interface USBStream {
+    deviceIdentifier?: string,
+    dataStream: number[][],
+    onStream: streamListenerCallback
+};

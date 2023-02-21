@@ -1,6 +1,6 @@
 import { Command } from "../Commands";
 import { error } from "../CommandLine";
-import { formatCharacters, RemovalMode } from "../../drivers/fs/FileSystem";
+import { formatCharacters, RemovalMode, createFile, PermissionLevel } from "../../drivers/fs/FileSystem";
 import { Session } from "../../data/session";
 import { CPUProcess } from "../../../../hardware/CPU";
 import { ConsoleStyle } from "../../../../util/ConsoleStyle";
@@ -32,8 +32,25 @@ export default {
             error(`A file with the same path already exists @ '${path}'`);
             return;
         }
-        
-        Session.loadedStorageDevice.write(path);
+
+        let permissionLevel: string | PermissionLevel = args[2];
+        if (permissionLevel && permissionLevel.includes("--pl=")) {
+            let lvl = permissionLevel.split("=")[1];
+            if (!lvl) return;
+            lvl = lvl.toUpperCase();
+
+            let key = (lvl as keyof PermissionLevel);
+            if (!key) return;
+            permissionLevel = (PermissionLevel[key]);
+        }
+        console.log(permissionLevel);
+        createFile(
+            path,
+            (typeof permissionLevel !== "string") ? permissionLevel : PermissionLevel.NONE,
+            "",
+            Session.loadedStorageDevice
+        );
+        //OLD: Session.loadedStorageDevice.write(path);
         os.write(
             `Successfully created ${destination} at ${path}.`,
             ConsoleStyle.FgGreen

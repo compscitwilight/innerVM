@@ -3,15 +3,44 @@ import hardware from "../../../../hardware";
 import { CPUProcess } from "../../../../hardware/CPU";
 import { Session } from "../../data/session";
 import { Directory } from "./Directory";
+import { File } from "./File";
+import { PermissionLevel } from "./PermissionLevel";
+import { StorageDevice } from "../../../../hardware/Storage";
 
-export { File } from "./File";
-export { FileExtensions } from "./FileExt";
-export { PermissionLevel } from "./PermissionLevel";
+export const InnerFSFile = File;
+export { FileExtensions } from "./ExtList";
+export { PermissionLevel };
 export { Directory };
+
+const files = new Map<string, File>();
 
 export enum RemovalMode {
     File = "File",
     Dir = "Directory"
+}
+
+export function init() {
+    let keys = [...Session.loadedStorageDevice.contents.keys()];
+    let values = [...Session.loadedStorageDevice.contents.values()];
+    for (
+        var i = 0;
+        i < keys.length;
+        i++
+    ) {
+        const path = keys[i];
+        if (!path.endsWith("/")) {
+            const content = values[i];
+            const file = new InnerFSFile(
+                path,
+                PermissionLevel.BASIC,
+                content,
+                Session.loadedStorageDevice
+            )
+            files.set(path, file);
+        }
+    }
+
+    console.log([...files.keys()]);
 }
 
 export function getStorageDevices() {
@@ -77,6 +106,20 @@ export function createDirectory(name: string) {
     return new Directory(formatted, currentDirectory + `/${formatted}`, Session.loadedStorageDevice);
 }
 
+export function createFile(
+    path: string,
+    pLevel: PermissionLevel,
+    content: string,
+    device: StorageDevice    
+) {
+    if (files.get(path)) return;
+    device.write(path, content);
+    
+    const file = new InnerFSFile(path, pLevel, content, device);
+    files.set(path, file);
+    return file; 
+}
+
 export function formatCharacters(str: string, mode: RemovalMode) {
     //str.replace(/ g/, "");
     switch (mode) {
@@ -98,4 +141,8 @@ export function formatCharacters(str: string, mode: RemovalMode) {
 
             return str;
     }
+}
+
+export function getFileObject(filePath: string) {
+    return files.get(filePath);
 }

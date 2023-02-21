@@ -10,8 +10,8 @@
  * memory, power settings, and the boot drive.
  */
 
-import hardware from "../../hardware";
-import { CPUProcess } from "../../hardware/CPU";
+import hardware from "../../../hardware";
+import { CPUProcess } from "../../CPU";
 
 export function startBIOS() {
     hardware.CPU.killAllProcesses(); // prevents incompatbility (memory addresses) + nothing should be running in the first place;

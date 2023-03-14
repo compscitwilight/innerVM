@@ -32,6 +32,12 @@ export class File {
         this.content = content;
     }
 
+    public appendTo(content: string) {
+        const newContent = this.content + content;
+        this.write(newContent);
+        return newContent;
+    }
+
     public delete() {
         this.storageDevice.rm(this.path);
     }

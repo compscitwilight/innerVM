@@ -22,7 +22,17 @@ import Storage from "./hardware/Storage";
 import CPU from "./hardware/CPU";
 import Memory from "./hardware/Memory";
 import { ConsoleStyle } from "./util/ConsoleStyle";
+import { startBootloader } from "./src/bootloader";
 //import packagejson from "package.json";
+
+/**
+ * This function will be invoked whenever the motherboard
+ * is invoked. Add whatever code you'd like to be executed
+ * on boot here.
+ */
+export function start() {
+    startBootloader();
+}
 
 var bufferText = "InnerVM";
 

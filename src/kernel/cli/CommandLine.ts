@@ -78,6 +78,23 @@ export function restartCLI(os: CPUProcess) {
     executeCLI(os);
 }
 
+/**
+ * Evaluates a command expression and executes it, while
+ * also checking for errors.
+ */
+export function evaluate(expression: string) {
+    const statements = expression.split("\n").map((line) => {
+        return line.split("&&");
+    });
+    
+    for (var i = 0; i < statements.length; i++) {
+        const statement = statements[i];
+        for (var s = 0; s < statement.length; s++) {
+            const command = statement[s];
+        }
+    }
+}
+
 export function error(msg: string, code?: number) {
     if (code)
         msg += ` (${code})`;

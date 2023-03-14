@@ -3,11 +3,16 @@ import Memory from "./Memory";
 import { startBIOS } from "./firmware/bios";
 import { Key, keyPressCallback } from "../util/InputTypes";
 import config from "../config";
+import { start } from "../";
 
 let BIOSAddress = 0x1;
 let BIOSRam = 1000000; // 1mb
 export default class Motherboard {
     public static usb_bus: USBStream[] = new Array<USBStream>();
+
+    /* CRYPTOGRAPHY */
+    protected pin?: number;
+
     public static executeFirmware() {
         Memory.allocate(BIOSAddress, BIOSRam);
         let bios = false;
@@ -18,8 +23,8 @@ export default class Motherboard {
             if (bios) {
                 CPU.executeProcess(BIOSAddress, startBIOS);
             } else {
-                if (typeof config.index === "function") {
-                    config.index();
+                if (typeof start === "function") {
+                    start();
                     Memory.deallocate(BIOSAddress);
                 } else {
                     console.log("Failed to boot into storage device.");

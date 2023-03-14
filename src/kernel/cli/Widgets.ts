@@ -2,7 +2,7 @@ import { ConsoleStyle } from "../../../util/ConsoleStyle";
 import { Widget, WidgetTemplate } from "./Widget";
 
 let TimeWidgetTemplates = [
-    new WidgetTemplate(`[cutie!]`, [
+    new WidgetTemplate(`[G.O.A.T]`, [
         {
             identifier: "h",
             value: new Date().getHours()
@@ -11,6 +11,6 @@ let TimeWidgetTemplates = [
             identifier: "m",
             value: new Date().getMinutes()
         }
-    ], [ ConsoleStyle.BgBlack, ConsoleStyle.FgMagenta ])
+    ], [ ConsoleStyle.BgBlack, ConsoleStyle.FgYellow ])
 ];
 export let TimeWidget = new Widget("time", TimeWidgetTemplates);

@@ -120,6 +120,12 @@ export function createFile(
     return file; 
 }
 
+export function appendTo(file: File, content: string) {
+    if (!getFileObject(file.path)) return;
+    const newContent = file.content + content;
+    return createFile(file.path, file.permissionLevel, newContent, file.storageDevice);
+}
+
 export function formatCharacters(str: string, mode: RemovalMode) {
     //str.replace(/ g/, "");
     switch (mode) {

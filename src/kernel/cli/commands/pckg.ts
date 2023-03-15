@@ -5,6 +5,7 @@ import { error } from "../CommandLine";
 import { createPackage } from "../../app/pckg";
 import { createFile, getFileObject, PermissionLevel } from "../../drivers/fs/FileSystem";
 import { Session } from "../../data/session";
+import { Network, HTTPMethod } from "../../drivers/Network";
 export default {
     name: "pckg",
     description: "Inner's package manager. Lets you install application and dependencies that run on your computer.",
@@ -36,7 +37,7 @@ export default {
 
             name = name.toLowerCase();
 
-            let path = `/pckg/${name}`;
+            let path = `/bin/pckg/${name}`;
             createPackage(name);
 
             os.write(`Created new package "${name}" in ${path}`, ConsoleStyle.FgGreen);
@@ -54,12 +55,27 @@ export default {
                 return;
             }
 
-            let reposFile = getFileObject("/pckg/repos.xml");
+            os.write(`Making an HTTP request to ${repoURL} to validate integrity.`);
+            Network.httpRequest(HTTPMethod.get, repoURL)
+            .then((response) => {
+                if (response.status !== 200) {
+                    error(`HTTP request to ${repoURL} returned with status code ${response.status}.`);
+                    return;
+                }
+                os.write(`${repoURL} returned status 200.`, ConsoleStyle.FgGreen);
+                os.write("press enter to return to command line", [ConsoleStyle.FgGray, ConsoleStyle.Dim]);
+                os.writeOut();
+            }).catch((e) => {
+                error(`HTTP Request to ${repoURL} failed. (${e})`);
+                return;
+            })
+
+            let reposFile = getFileObject("/bin/pckg/repos.xml");
             if (!reposFile) {
-                os.write("Couldn't locate /pckg/repos.xml. Restoring file to complete operation...", ConsoleStyle.FgYellow);
+                os.write("Couldn't locate /bin/pckg/repos.xml. Restoring file to complete operation...", ConsoleStyle.FgYellow);
                 os.writeOut();
                 reposFile = createFile(
-                    "/pckg/repos.xml",
+                    "/bin/pckg/repos.xml",
                     PermissionLevel.ADMIN,
                     `<?xml version="1.0" encoding="utf-8"?>\n`,
                     Session.loadedStorageDevice

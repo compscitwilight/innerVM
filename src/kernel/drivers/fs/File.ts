@@ -13,7 +13,8 @@ export interface FileProperties {
 }
 
 export class File {
-    public properties: FileProperties;
+    public properties: FileProperties = {};
+    public bindings: Map<string, any> = new Map<string, any>();
     public constructor(
         public path: string,
         public permissionLevel: PermissionLevel,
@@ -45,4 +46,16 @@ export class File {
     public setPermissionLevel(level: PermissionLevel) {
         this.permissionLevel = level;
     }
+
+    public getProperty(property: keyof FileProperties) {
+        const keys = Object.keys(this.properties);
+        let index: number;
+        for (var i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            if (key == property)
+                index = i;
+        }
+        return Object.values(this.properties)[index];
+    }
 }
+

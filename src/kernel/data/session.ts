@@ -1,14 +1,17 @@
 import { StorageDevice } from "../../../hardware/Storage";
 import { formatCharacters, RemovalMode } from "../drivers/fs/FileSystem";
 import { Widget } from "../cli/Widget";
+import { Service } from "../drivers/Service";
+import { File } from "../drivers/fs/File";
 
 /**
  * User session data.
  */
 export class Session {
-    protected static currentDirectory: string = "/";
+    public static currentDirectory: string = "/";
     public static loadedStorageDevice: StorageDevice;
-    protected static readonly widgets: Widget[];
+    public static readonly widgets: Widget[] = new Array<Widget>();
+    public static readonly runningServices: Service[] = new Array<Service>();
 
     public static getCurrentDirectory() {
         return this.currentDirectory;
@@ -25,5 +28,18 @@ export class Session {
 
     public static addWidget(widget: Widget) {
         
+    }
+
+    public static startService(serviceFile: File, alias?: string) {
+        const service = new Service(alias || "unknown_service", serviceFile);
+        this.runningServices.push(service);
+        return service;
+    }
+
+    public static findService(alias: string) {
+        const results = this.runningServices.filter((service) => {
+            service.sysAlias == alias;
+        })
+        return results;
     }
 }

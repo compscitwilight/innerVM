@@ -43,7 +43,7 @@ export default {
             if (!key) return;
             permissionLevel = (PermissionLevel[key]);
         }
-        console.log(permissionLevel);
+        
         createFile(
             path,
             (typeof permissionLevel !== "string") ? permissionLevel : PermissionLevel.NONE,

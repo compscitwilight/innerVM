@@ -11,11 +11,12 @@ import { executeCLI } from "./cli/CommandLine";
 import hardware from "../../hardware";
 import { Session } from "./data/session";
 import { ConsoleStyle } from "../../util/ConsoleStyle";
-import { init, formatDisk } from "./drivers/fs/FileSystem";
+import { init, formatDisk, getFileObject, createFile, PermissionLevel } from "./drivers/fs/FileSystem";
 import { StorageDevice } from "../../hardware/Storage";
 import { readdirSync, readFileSync } from "fs";
 import { changeTopBuffer } from "../../";
 import { join } from "path";
+import ACPI from "./drivers/ACPI";
 
 export const kernelInfo = {
     version: 1.2
@@ -47,28 +48,28 @@ export function executeKernel(os: CPUProcess) {
 export function bootstrap() {
     let bootedDrive = Session.loadedStorageDevice;
 
-    // pre-load
-    /**
-     * sys/ is where system files are located, such as configuration files, system assets, and
-     * other important files.
-     */
-    bootedDrive.write("sys/");
+    const test = createFile("prop_cmd", PermissionLevel.NONE, "", Session.loadedStorageDevice);
+    test.properties.creator = "Me";
 
-    /**
-     * pckg/ is where packages are downloaded. These packages can be from any package manager which
-     * supports InnerOS, such as innerPCKG, and soon to be Node.js
-     */
-    bootedDrive.write("pckg/");
+    createFile("/bin/", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
+    createFile("/bin/pckg/", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
+    createFile("/bin/apps/", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
 
-    /**
-     * bin/ is where temporary files are stored, such as logs and program cache.
-     */
-    bootedDrive.write("bin/");
+    createFile("/sys/", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
+    createFile("/sys/services/", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
+    createFile("/sys/widgets/", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
+    createFile("/sys/devices/", PermissionLevel.SYSTEM, "", Session.loadedStorageDevice);
 
-    /**
-     * src/ is where program files are located.
-     */
-    bootedDrive.write("src/");
+    createFile("/var/", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
+    createFile("/var/profiles/", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
+
+    /* Core services bootstrapping */
+    const servicepd = createFile("/sys/services/servicepd.service", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
+    servicepd.appendTo("[Service]\n");
+    servicepd.appendTo("Name=servicepd\n");
+    servicepd.appendTo("Description=\"A core system service which handles services in InnerOS.\"\n");
+    servicepd.appendTo("Execution=\n\n");
+    Session.startService(servicepd, "servicepd");
 
     /**
      * Creating .app files for the built-in Kernel applications
@@ -95,13 +96,13 @@ export function panic(msg: string, address?: number) {
             panicProcess.write(`@ ${address}`);
         panicProcess.write("Your system has unexpectedly crashed. If you'd like to view a log what happened, please view /bin/logs once you've rebooted.");
         panicProcess.write("If your system is unable to reboot, please create a new issue on the Github repository for further assistance.");
-        
         panicProcess.writeOut();
 
-        for (;;)
-            panicProcess.write("");
-
-        //ACPI.shutdown();
+        panicProcess.write("automatically shutting down in 60 seconds.");
+        panicProcess.writeOut();
+        hardware.CPU.timeout(60000, () => {
+            ACPI.shutdown();
+        })
     })
 };
 

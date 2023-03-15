@@ -39,8 +39,6 @@ export function init() {
             files.set(path, file);
         }
     }
-
-    console.log([...files.keys()]);
 }
 
 export function getStorageDevices() {
@@ -76,18 +74,6 @@ export function getCurrentDirectoryContents() {
     return directoryContents;
 }
 
-export function listCurrentDirectory(os: CPUProcess) {
-    let directory = Session.getCurrentDirectory();
-    let directoryContents = getCurrentDirectoryContents();
-
-    let spaces = " ".repeat(2);
-    os.write(`Contents for ${directory}`);
-    directoryContents.forEach((dir) => {
-        os.write((spaces + dir + spaces), ConsoleStyle.BgBlue);
-    })
-    os.writeOut();
-}
-
 export function formatDisk() {
     let device = Session.loadedStorageDevice;
     let contents = [...device.contents.keys()];
@@ -120,14 +106,7 @@ export function createFile(
     return file; 
 }
 
-export function appendTo(file: File, content: string) {
-    if (!getFileObject(file.path)) return;
-    const newContent = file.content + content;
-    return createFile(file.path, file.permissionLevel, newContent, file.storageDevice);
-}
-
 export function formatCharacters(str: string, mode: RemovalMode) {
-    //str.replace(/ g/, "");
     switch (mode) {
         case (RemovalMode.File):
             if (str.startsWith("/"))
@@ -151,4 +130,8 @@ export function formatCharacters(str: string, mode: RemovalMode) {
 
 export function getFileObject(filePath: string) {
     return files.get(filePath);
+}
+
+export function getDirectoryObject(dirPath: string) {
+    
 }

@@ -1,7 +1,9 @@
 import { CPUProcess } from "../../../../hardware/CPU";
 import { Command } from "../Commands";
 import { error } from "../CommandLine";
-import { Session } from "../../data/session";
+import { getFileObject } from "../../drivers/fs/FileSystem";
+import { FileProperties } from "../../drivers/fs/File";
+//import { Session } from "../../data/session";
 export default {
     name: "prop",
     description: "Allows the user to view and change file properties.",
@@ -30,6 +32,7 @@ export default {
     execute: (args: string[], cmd: string, os: CPUProcess) => {
         const file = args[1];
         const action = args[2];
+        const property = args[3];
         if (!file) {
             error("Missing 'file' argument.");
             return;
@@ -40,14 +43,27 @@ export default {
             return;
         }
 
-        if (!Session.loadedStorageDevice.contains(file)) {
+        if (!property) {
+            error("Missing 'property' argument.");
+            return;
+        }
+
+        const fileObject = getFileObject(file);
+        if (!fileObject) {
             error(`File "${file}" doesn't exist.`);
+            return;
+        }
+
+        if (!Object.keys(fileObject.properties).includes(property)) {
+            error("Invalid property.");
             return;
         }
 
         switch (action.toLowerCase()) {
             case "read":
-                
+                const val = fileObject.getProperty(property as keyof FileProperties);
+                os.write(val);
+                os.writeOut();
                 break;
             case "":
 

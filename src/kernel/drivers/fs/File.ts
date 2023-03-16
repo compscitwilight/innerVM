@@ -34,7 +34,7 @@ export class File {
     }
 
     public appendTo(content: string) {
-        const newContent = this.content + content;
+        const newContent = this.content + `${content}\n`;
         this.write(newContent);
         return newContent;
     }

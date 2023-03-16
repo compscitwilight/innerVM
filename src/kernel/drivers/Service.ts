@@ -1,6 +1,7 @@
 import { File } from "./fs/File";
 import { error, evaluate } from "../cli/CommandLine";
 import { Session } from "../data/session";
+import hardware from "../../../hardware";
 
 const LinebreakReplacement = "$LINEBREAK$";
 
@@ -8,8 +9,9 @@ const LinebreakReplacement = "$LINEBREAK$";
  * Extracts the value from (KEY=VALUE).
  * @param line The line that will get the value extracted.
  */
-function extractValue(line: string) {
-    return line.split(" ").splice(1).join(" ");
+function extractKeyValue(line: string) {
+    const segments = line.split("=");
+    return [segments[0], segments.splice(1).join(" ")]
 }
 
 export class Service {
@@ -17,93 +19,107 @@ export class Service {
     public description?: string;
     public execCommand?: string;
 
-    public methods?: ServiceMethod[];
-    public props?: ServiceProp[];
+    public methods: ServiceMethod[] = new Array<ServiceMethod>();
     protected status?: ServiceStatus;
 
     public constructor(
         public sysAlias: string,
         public serviceFile: File
     ) {
-        const content = serviceFile.content.split("\n").join(LinebreakReplacement).split(LinebreakReplacement);
-        console.log(content)
+        function formatContent() {
+            return serviceFile.content.split("\n").join(LinebreakReplacement).split(LinebreakReplacement).filter((l) => {
+                return !l.startsWith("#");
+            });
+        }
+        const content = formatContent();
         if (content[0].toLowerCase() !== "[service]") {
             error(`Invalid service file when starting a service with ${serviceFile.path}. Missing [Service] declaration at line 1.`);
             return;
         }
+        if (!content.toLocaleString().toLowerCase().includes("[service.methods]")) {
+            error(`Missing [Service.Methods] declaration in ${serviceFile.path}.`);
+            return;
+        }
 
-        for (var i = 0; i < content.length; i++) {
-            const line = content[i].toLowerCase().replace(/ g/, "");
-            let scannedMetadata = false;
-            let scannedProps = false;
-            let scannedMethods = false;
-
-            /* SERVICE METADATA */
-            if (!scannedMetadata && !scannedProps && !scannedMethods) {
-                scannedMetadata = true;
-
-                if (line.startsWith("name=")) {
-                    const name = extractValue(line);
-                    this.name = name;
+        const serviceMethodsStartIndex = content.indexOf("[Service.Methods]");
+        const metadataFields = formatContent().splice(0, serviceMethodsStartIndex);
+        for (var i = 0; i < metadataFields.length; i++) {
+            const field = metadataFields[i];
+            if (field.includes("=")) {
+                const [key, value] = extractKeyValue(field);
+                const lowered = key.toLowerCase();
+                if (lowered == "name") {
+                    this.name = value;
+                } else if (lowered == "description") {
+                    this.description = value;
                 }
-
-                if (line.startsWith("description=")) {
-                    const description = extractValue(line);
-                    this.description = description;
-                }
-
-                if (line.startsWith("execution=")) {
-                    const execution = extractValue(line);
-                    this.execCommand = execution;
-                }
-            }
-
-            /* PROPS */
-            if (!scannedMethods && scannedMetadata) {
-                scannedProps = true;
-
-                if (line == "[service.props]") {
-                    this.props = new Array<ServiceProp>();
-                }
-
-                if (line == "[prop]") {
-                    const propData = {
-                        name: "",
-                        value: 0,
-                        type: ServicePropType.INTEGER
-                    };
-
-                    if (line.startsWith("name=")) {
-                        const name = extractValue(line);
-                        propData.name = name;
-                    }
-
-                    if (line.startsWith("type=")) {
-                        const type = extractValue(line);
-                        if (!Object.values(ServicePropType).find((t) => t == type)) {
-                            error(`Invalid type for service prop ${this.serviceFile.path}.${propData.name}`);
-                            this.halt();
-                            break;
-                        }
-                    }
-
-                    if (line.startsWith("value=")) {
-                        const value = extractValue(line);
-                        
-                    }
-                }
-            }
-
-            /* METHODS */
-            if (scannedProps && scannedMetadata) {
-                scannedMethods = true;
             }
         }
 
+        function getMethods() {
+            return formatContent().splice(serviceMethodsStartIndex, formatContent().length);
+        }
+
+        const methods = getMethods();
+        for (var i = 0; i < methods.length; i++) {
+            const line = methods[i];
+            if (line.toLowerCase() == "[method]") {
+                const keyValues: Array<{key: string, value: string}> = [];;
+                const section = methods.splice(0, i);
+                let nextMethod = 0;
+                for (var d = 0; d < section.length; d++) {
+                    const duplicate = section[d];
+                    if (duplicate.toLowerCase() == "[method]" && d !== i)
+                        nextMethod = d;
+                }
+
+                if (nextMethod > 0)
+                    section.splice(nextMethod, section.length);
+
+                for (var s = 0; s < section.length; s++) {
+                    const [key, value] = extractKeyValue(section[s]);
+                    keyValues.push({
+                        key: key,
+                        value: value
+                    })
+                }
+                
+                const methodData = {
+                    name: "",
+                    description: "",
+                    execution: ""
+                }
+
+                for (var kv = 0; kv < keyValues.length; kv++) {
+                    const keyValue = keyValues[kv];
+                    const key = keyValue.key.toLowerCase();
+                    const value = keyValue.value;
+
+                    if (key == "name")
+                        methodData.name = value;
+                    if (key == "description")
+                        methodData.description = value;
+                    if (key == "execution")
+                        methodData.execution = value;
+                }
+
+                if (methodData.name && methodData.execution)
+                    this.createMethod(methodData.name, methodData.execution, methodData.description || "");
+            }
+        }
+
+        hardware.Memory.allocate(0x0005, 1);
+        hardware.CPU.executeProcess(0x0005, (process) => {
+            process.alias = this.name;
+        })
         Session.runningServices.push(this);
         this.status = ServiceStatus.RUNNING;
     };
 
+    /**
+     * 
+     * @returns The status of the service
+     */
     public getStatus() {
         return this.status;
     }
@@ -145,20 +161,46 @@ export class Service {
     public halt() {
         this.status = ServiceStatus.HALTED;
     }
-}
 
-export class ServiceProp {
-    public constructor(
-        public name: string,
-        public value: any,
-        public type: ServicePropType
-    ) {
-        
+    /**
+     * Creates a new method for the service.
+     * @param name The name of the method
+     * @param execution The command that will be executed whenever the method is invoked
+     * @param description The description of the method
+     */
+    public createMethod(name: string, execution: string, description?: string) {
+        const method = new ServiceMethod(name, execution, description);
+        this.methods.push(method);
+    }
+
+    public getMethod(name: string) {
+        return this.methods.find((method) => method.name == name);
+    }
+
+    /**
+     * Executes a service method with the given name.
+     * @param methodName The name of the method
+     */
+    public executeMethod(methodName: string, args?: string[]) {
+        const method = this.getMethod(methodName);
+        if (!method) {
+            error(`Invalid method ${this.sysAlias}.${method}`);
+            return;
+        }
+        method.execute();
     }
 }
 
 export class ServiceMethod {
+    public constructor(
+        public readonly name: string,
+        public readonly execution: string,
+        public readonly description?: string
+    ) { }
 
+    public execute() {
+        return evaluate(this.execution)
+    }
 }
 
 export enum ServiceStatus {

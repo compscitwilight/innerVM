@@ -32,13 +32,12 @@ export class Session {
 
     public static startService(serviceFile: File, alias?: string) {
         const service = new Service(alias || "unknown_service", serviceFile);
-        this.runningServices.push(service);
         return service;
     }
 
     public static findService(alias: string) {
         const results = this.runningServices.filter((service) => {
-            service.sysAlias == alias;
+            return service.sysAlias == alias;
         })
         return results;
     }

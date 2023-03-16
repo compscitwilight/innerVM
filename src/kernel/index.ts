@@ -25,7 +25,7 @@ export const kernelInfo = {
 export function executeKernel(os: CPUProcess) {
     changeTopBuffer(`InnerVM - InnerOS v${kernelInfo.version}`);
     // bootstrapping
-    bootstrap();
+    bootstrap(os);
 
     // load process
     os.write("formatting disk for InnerFS...", ConsoleStyle.FgYellow);
@@ -45,7 +45,7 @@ export function executeKernel(os: CPUProcess) {
  * For the first time running the machine. Creates the core files in the root directory
  * of the booted storage device.
  */
-export function bootstrap() {
+export function bootstrap(os: CPUProcess) {
     let bootedDrive = Session.loadedStorageDevice;
 
     const test = createFile("prop_cmd", PermissionLevel.NONE, "", Session.loadedStorageDevice);
@@ -64,12 +64,16 @@ export function bootstrap() {
     createFile("/var/profiles/", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
 
     /* Core services bootstrapping */
-    const servicepd = createFile("/sys/services/servicepd.service", PermissionLevel.ADMIN, "", Session.loadedStorageDevice);
-    servicepd.appendTo("[Service]\n");
-    servicepd.appendTo("Name=servicepd\n");
-    servicepd.appendTo("Description=\"A core system service which handles services in InnerOS.\"\n");
-    servicepd.appendTo("Execution=\n\n");
-    Session.startService(servicepd, "servicepd");
+    readdirSync(join(__dirname, "/services")).filter((f) => f.endsWith(".ini")).forEach((s) => {
+        const content = readFileSync(join(__dirname, `/services/${s}`)).toString();
+        s = s.replace(".ini", ".service");
+
+        const serviceFile = createFile(`/sys/services/${s}`, PermissionLevel.ADMIN, content, Session.loadedStorageDevice);
+        Session.startService(serviceFile, s.replace(".service", ""));
+
+        os.write(`[CORE_SERVICE_START_SUCCESS] - ${s}`, [ConsoleStyle.FgGreen, ConsoleStyle.BgBlack]);
+        os.writeOut();
+    })
 
     /**
      * Creating .app files for the built-in Kernel applications

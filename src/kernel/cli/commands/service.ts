@@ -4,15 +4,16 @@ import { Command } from "../Commands";
 import { Session } from "../../data/session";
 import { error } from "../CommandLine";
 import { ServiceStatus } from "../../drivers/Service";
+import { getFileObject } from "../../drivers/fs/FileSystem";
 export default {
     name: "service",
     description: "A system utility command that contains functions related to system-wide services.",
     execute: (args: string[], cmd: string, os: CPUProcess) => {
         const action = args[1];
-        const alias = args[2];
         if (!action) {
             os.write("system services utility", ConsoleStyle.BgBlack);
             os.write("service list - Lists all services running on the system, no matter their status.");
+            os.write("service execute [SERVICE].[METHOD] - Executes a method in a service.");
             os.write("service status [SERVICE] - Returns the status of a service.");
             os.write("service start [SERVICE_FILE] - Starts a new service with the service file provided.", ConsoleStyle.BgGreen);
             os.write("service halt [SERVICE] - Halts a service.", ConsoleStyle.BgRed);
@@ -30,6 +31,7 @@ export default {
             })
             os.writeOut();
         } else if (lowered == "status") {
+            const alias = args[2];
             if (!alias) {
                 error("Missing 'alias' argument.");
                 return;
@@ -72,7 +74,31 @@ export default {
                 os.writeOut();
             })
         } else if (lowered == "start") {
+            const path = args[2];
+            if (!path) {
+                error("Missing 'path' argument.");
+                return;
+            }
 
+            if (!path.endsWith(".service")) {
+                error("The file provided is not a .service file. Please change the file extension to .service");
+                return;
+            }
+
+            const fileObj = getFileObject(path);
+            if (!fileObj) {
+                error(`Invalid file ${path}.`);
+                return;
+            }
+
+            if (Session.runningServices.find((service) => service.serviceFile.path == fileObj.path)) {
+                error("There is already a running service with the service file provided.");
+                return;
+            }
+
+            os.write("Starting service...", ConsoleStyle.FgYellow);
+            os.writeOut();
+            Session.startService(fileObj);
         } else if (lowered == "halt") {
 
         } else if (lowered == "resume") {
@@ -80,6 +106,8 @@ export default {
         } else if (lowered == "stop") {
 
         } else if (lowered == "restart") {
+
+        } else if (lowered == "execute") {
 
         }
     }
